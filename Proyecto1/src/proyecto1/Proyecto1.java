@@ -9,6 +9,7 @@ package proyecto1;
  * @author jesus rodriguez
  */
 public class Proyecto1 {
+    
 
     /**
      * @param args the command line arguments
