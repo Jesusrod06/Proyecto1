@@ -11,16 +11,17 @@ import java.util.ArrayList;
  * @author jesus rodriguez
  */
 public class WordPath {
-    private List<Node> path;
+ private List<Node> path;
     private String word;
     private String direction;
     
-    public WordPath(){
+    public WordPath() {
         this.path = new ArrayList<>();
         this.word = "";
         this.direction = "";
     }
-     public WordPath(List<Node> path) {
+    
+    public WordPath(List<Node> path) {
         this.path = new ArrayList<>(path);
         this.word = buildWordFromPath();
         this.direction = calculateDirection();
@@ -31,16 +32,33 @@ public class WordPath {
         word = buildWordFromPath();
         direction = calculateDirection();
     }
-     public List<Node> getPath() {
+    
+    public List<Node> getPath() {
         return new ArrayList<>(path);
     }
-   
+    
     public String getWord() {
         return word;
     }
     
     public String getDirection() {
         return direction;
+    }
+    
+    public Node getStartNode() {
+        return path.isEmpty() ? null : path.get(0);
+    }
+    
+    public Node getEndNode() {
+        return path.isEmpty() ? null : path.get(path.size() - 1);
+    }
+    
+    public int getLength() {
+        return path.size();
+    }
+    
+    public boolean isEmpty() {
+        return path.isEmpty();
     }
     
     private String buildWordFromPath() {
@@ -52,7 +70,9 @@ public class WordPath {
     }
     
     private String calculateDirection() {
-        if (path.size() < 2) return "N/A";
+        if (path.size() < 2) {
+            return "N/A";
+        }
         
         Node start = path.get(0);
         Node end = path.get(path.size() - 1);
@@ -70,5 +90,18 @@ public class WordPath {
         if (deltaRow < 0 && deltaCol < 0) return "Diagonal Up-Left";
         
         return "Complex";
+    }
+    
+    @Override
+    public String toString() {
+        if (path.isEmpty()) {
+            return "Empty path";
+        }
+        
+        Node start = getStartNode();
+        Node end = getEndNode();
+        
+        return String.format("Word: %s, Start: (%d,%d), End: (%d,%d), Direction: %s",
+                word, start.getRow(), start.getCol(), end.getRow(), end.getCol(), direction);
     }
 }    

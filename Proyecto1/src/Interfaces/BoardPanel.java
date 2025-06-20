@@ -10,7 +10,7 @@ import java.util.List;
 import proyecto1.Node;
 import proyecto1.WordPath;
 
-/**
+/*
  *
  * @author jesus rodriguez
  */
@@ -123,6 +123,7 @@ public class BoardPanel  extends JPanel {
         repaint();
     }
     
+     @Override
     public Dimension getPreferredSize() {
         if (grid != null) {
             return new Dimension(cols * 45, rows * 45);
