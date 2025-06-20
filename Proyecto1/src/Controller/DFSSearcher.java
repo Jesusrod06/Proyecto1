@@ -2,10 +2,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package proyecto1;
+package Controller;
 
 import java.util.List;
 import java.util.ArrayList;
+import proyecto1.Dictionary;
+import proyecto1.Graph;
+import proyecto1.Node;
+import proyecto1.SearchResult;
+import proyecto1.WordPath;
 
 
 
