@@ -4,19 +4,16 @@
  */
 package Interfaces;
 
-import proyecto1.Graph;
+import proyecto1.SearchResult;
 import proyecto1.Dictionary;
-import Controller.DFSSearcher;
-import Controller.BFSSearcher;
-import proyecto1.WordPath;
-import proyecto1.Node;
-import Controller.FileManager;
+import Controller.WordSearcher;
 import Controller.TreeVisualizer;
+import Controller.FileManager;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import proyecto1.Proyecto1;
+import proyecto1.WordPath;
 
 
 
@@ -24,8 +21,10 @@ import proyecto1.Proyecto1;
  *
  * @author jesus rodriguez
  */
-public class MainFrame {
-    private Proyecto1 proyecto1;
+
+
+public class MainFrame extends JFrame {
+    private WordSearcher wordSearcher;
     private BoardPanel boardPanel;
     private ControlPanel controlPanel;
     private ResultPanel resultPanel;
@@ -38,7 +37,7 @@ public class MainFrame {
         initializeComponents();
         logWindow = new LogWindow();
         treeDisplayFrame = new TreeDisplayFrame();
-        proyecto1.setLogWindow(logWindow);
+        wordSearcher.setLogWindow(logWindow);
         setupLayout();
         setupEventHandlers();
         setWindowProperties();
@@ -273,7 +272,7 @@ public class MainFrame {
                         logWindow.appendLog("Palabra '" + word + "' encontrada! Ruta: " + path.toString());
                         
                         // Marcar nodos como usados
-                        for (com.wordsearch.model.Node node : path.getPath()) {
+                        for (proyecto1.Node node : path.getPath()) {
                             node.setUsed(true);
                         }
 
@@ -439,5 +438,5 @@ public class MainFrame {
     
     public LogWindow getLogWindow() {
         return logWindow;
-    } 
+    }
 }
