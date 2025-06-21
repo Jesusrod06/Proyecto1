@@ -15,7 +15,7 @@ Es una aplicación con interfaz gráfica de usuario programada en **Java Swing**
 
 ## 🌐 Repositorio del Proyecto
 
-**Repositorio GitHub:** []
+**Repositorio GitHub:** [https://github.com/Jesusrod06/Proyecto1.git]
 
 > **Nota:** Este repositorio mantiene un historial completo del desarrollo colaborativo del proyecto, en donde solo suma las contribuciones de una sola persona ,al no poder encontrar un grupo.
 
