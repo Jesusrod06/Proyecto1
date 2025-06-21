@@ -48,7 +48,7 @@ JAVA-PROJECT/
 - **Java 8+** - Lenguaje de programación principal
 - **Java Swing** - Framework para interfaz gráfica
 - **JavaDoc** - Generación automática de documentación
-- **Git & GitHub** - Control de versiones colaborativo
+- **Git & GitHub** - para actualizar el proyecto
 
 ## 🎯 Algoritmos Implementados
 
