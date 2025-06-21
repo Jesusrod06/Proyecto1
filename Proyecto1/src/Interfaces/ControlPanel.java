@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Control panel with search buttons and options for the word search application.
  */
-public class ControlPanel  extends JPanel  {
+public class ControlPanel extends JPanel {
     private JButton dfsButton;
     private JButton bfsButton;
     private JButton loadFileButton;
@@ -24,21 +24,50 @@ public class ControlPanel  extends JPanel  {
     private JTextField specificWordField;
     private JButton specificWordButton;
     private SearchListener searchListener;
-    
+
+    /**
+     * Interface for handling search events.
+     */
     public interface SearchListener {
+        /** Triggered when the DFS search button is clicked. */
         void onDFSSearch();
+        
+        /** Triggered when the BFS search button is clicked. */
         void onBFSSearch();
+        
+        /** Triggered when the load file button is clicked. */
         void onLoadFile();
+        
+        /** Triggered when the clear button is clicked. */
         void onClear();
+        
+        /**
+         * Triggered when searching for a specific word.
+         * @param word The word to search for.
+         */
         void onSpecificWordSearch(String word);
     }
     
+    /**
+     * Constructs the control panel by initializing:
+     *  All visual components
+     *  Layout of the interface
+     *  Event handlers
+     */
     public ControlPanel() {
         initializeComponents();
         setupLayout();
         setupEventHandlers();
     }
     
+    /**
+     * Initializes all graphical components:
+     *  Main buttons (DFS, BFS, Load, Clear)
+     *  Field for specific word search
+     *  Progress bar
+     *  List of words to search for
+     *  Status label
+     */
     private void initializeComponents() {
         dfsButton = new JButton("DFS Search");
         bfsButton = new JButton("BFS Search");
@@ -46,7 +75,7 @@ public class ControlPanel  extends JPanel  {
         clearButton = new JButton("Clear");
         
         specificWordField = new JTextField(15);
-        specificWordButton = new JButton("Buscar Palabra");
+        specificWordButton = new JButton("Search Word");
         
         progressBar = new JProgressBar();
         progressBar.setIndeterminate(false);
@@ -66,6 +95,12 @@ public class ControlPanel  extends JPanel  {
         specificWordButton.setEnabled(false);
     }
     
+    /**
+     * Sets up the visual layout of the panel by organizing:
+     * Top panel with main buttons and word list
+     * Bottom panel with progress bar and status
+     * Side panel for specific word search
+     */
     private void setupLayout() {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createTitledBorder("Controls"));
@@ -77,10 +112,10 @@ public class ControlPanel  extends JPanel  {
         buttonPanel.add(bfsButton);
         buttonPanel.add(clearButton);
         
-        // Panel para búsqueda específica
+        // Panel for specific search
         JPanel specificSearchPanel = new JPanel(new FlowLayout());
-        specificSearchPanel.setBorder(BorderFactory.createTitledBorder("Búsqueda Específica"));
-        specificSearchPanel.add(new JLabel("Palabra:"));
+        specificSearchPanel.setBorder(BorderFactory.createTitledBorder("Specific Search"));
+        specificSearchPanel.add(new JLabel("Word:"));
         specificSearchPanel.add(specificWordField);
         specificSearchPanel.add(specificWordButton);
         
@@ -105,6 +140,12 @@ public class ControlPanel  extends JPanel  {
         add(statusPanel, BorderLayout.SOUTH);
     }
     
+    /**
+     * Sets up event handlers for:
+     * Button clicks
+     * Specific word search
+     * Notifies the SearchListener when events occur.
+     */
     private void setupEventHandlers() {
         loadFileButton.addActionListener(e -> {
             if (searchListener != null) {
@@ -137,23 +178,35 @@ public class ControlPanel  extends JPanel  {
         });
     }
     
+    /**
+     * Sets the listener to receive search events.
+     * @param listener The object implementing SearchListener.
+     */
     public void setSearchListener(SearchListener listener) {
         this.searchListener = listener;
     }
     
+    /**
+     * Updates the list of words to search for.
+     * @param words List of words to display.
+     */
     public void updateWordList(List<String> words) {
         wordListModel.clear();
         for (String word : words) {
             wordListModel.addElement(word);
         }
         
-        // Enable search buttons when words are loaded
+        // Habilitar botones de búsqueda cuando se cargan palabras
         dfsButton.setEnabled(true);
         bfsButton.setEnabled(true);
         specificWordButton.setEnabled(true);
         statusLabel.setText("Grid loaded - Ready to search for " + words.size() + " words");
     }
     
+    /**
+     * Changes the visual state during a search.
+     * @param inProgress true if a search is in progress, false if it has completed.
+     */
     public void setSearchInProgress(boolean inProgress) {
         dfsButton.setEnabled(!inProgress);
         bfsButton.setEnabled(!inProgress);
@@ -171,6 +224,13 @@ public class ControlPanel  extends JPanel  {
         }
     }
     
+    /**
+     * Clears the entire interface:
+     * Empties the word list
+     * Disables buttons
+     * Resets the progress bar
+     * Restores the status message.
+     */
     public void clear() {
         wordListModel.clear();
         dfsButton.setEnabled(false);
@@ -180,7 +240,12 @@ public class ControlPanel  extends JPanel  {
         statusLabel.setText("Ready - Load a grid file to begin");
     }
     
+    /**
+     * Updates the status message.
+     * @param status New message to display.
+     */
     public void setStatus(String status) {
         statusLabel.setText(status);
     }
 }
+

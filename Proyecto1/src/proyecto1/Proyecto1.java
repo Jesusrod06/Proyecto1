@@ -10,8 +10,8 @@ import Interfaces.MainFrame;
 
 
 /**
- *
- * @author jesus rodriguez
+ * main of the project
+ * 
  */
 public class Proyecto1 {
     

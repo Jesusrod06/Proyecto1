@@ -17,19 +17,25 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 /**
- *
- * @author jesus rodriguez
+ *Separate window to display search tree visualizations
+ * 
  */
-public class TreeVisualationFrame extends JFrame{
+public class TreeVisualationFrame extends JFrame {
     private JTextArea treeArea;
     private JScrollPane scrollPane;
     
+    /**
+     * Constructs the TreeVisualationFrame and initializes its components, layout, and window properties.
+     */
     public TreeVisualationFrame() {
         initializeComponents();
         setupLayout();
         setWindowProperties();
     }
     
+    /**
+     * Initializes the components of the TreeVisualationFrame, including the text area and scroll pane.
+     */
     private void initializeComponents() {
         treeArea = new JTextArea();
         treeArea.setEditable(false);
@@ -41,6 +47,10 @@ public class TreeVisualationFrame extends JFrame{
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     }
     
+    /**
+     * Sets up the layout of the TreeVisualationFrame, organizing the title label,
+     * scroll pane, and close button.
+     */
     private void setupLayout() {
         setLayout(new BorderLayout());
         
@@ -60,6 +70,9 @@ public class TreeVisualationFrame extends JFrame{
         add(buttonPanel, BorderLayout.SOUTH);
     }
     
+    /**
+     * Sets the properties of the window, including title, size, location, and default close operation.
+     */
     private void setWindowProperties() {
         setTitle("Search Tree Visualization");
         setSize(600, 500);
@@ -67,11 +80,18 @@ public class TreeVisualationFrame extends JFrame{
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
     }
     
+    /**
+     * Displays the search tree in the text area.
+     * @param treeString The string representation of the tree to be displayed.
+     */
     public void displayTree(String treeString) {
         treeArea.setText(treeString);
         treeArea.setCaretPosition(0);
     }
     
+    /**
+     * Clears the text area and sets a default message indicating no tree data is available.
+     */
     public void clear() {
         treeArea.setText("No tree data available.\n\nPerform a search to see the tree visualization here.");
     }

@@ -16,13 +16,12 @@ import java.util.ArrayList;
 import proyecto1.WordPath;
 
 
-
 /**
- *
- * @author jesus rodriguez
+ * Main application window for the Word Search Puzzle Solver.
+ * This class manages the user interface components and coordinates
+ * the interactions between the various panels, including the board,
+ * control, results, and log windows.
  */
-
-
 public class MainFrame extends JFrame {
     private WordSearcher wordSearcher;
     private BoardPanel boardPanel;
@@ -32,6 +31,10 @@ public class MainFrame extends JFrame {
     private LogWindow logWindow;
     private TreeDisplayFrame treeDisplayFrame;
     
+    /**
+     * Constructs the main application frame and initializes all components.
+     * It sets up the layout, event handlers, and menu bar.
+     */
     public MainFrame() {
         initializeFrame();
         initializeComponents();
@@ -44,13 +47,17 @@ public class MainFrame extends JFrame {
         setupMenuBar();
     }
     
+    /**
+     * Initializes basic frame properties such as title, size, and close operation.
+     * It also creates placeholder panels for the board, results, and controls.
+     */
     private void initializeFrame() {
         setTitle("Word Search Application");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1000, 700);
         setLocationRelativeTo(null);
         
-        // Create placeholder panels
+        // Crear paneles de marcador de posición
         JPanel centerPanel = new JPanel();
         centerPanel.add(new JLabel("Board Panel - Grid will be displayed here"));
         centerPanel.setBorder(BorderFactory.createTitledBorder("Word Search Grid"));
@@ -69,7 +76,7 @@ public class MainFrame extends JFrame {
         add(eastPanel, BorderLayout.EAST);
         add(southPanel, BorderLayout.SOUTH);
         
-        // Create simple menu bar
+        // Crear barra de menú simple
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
         JMenu viewMenu = new JMenu("View");
@@ -81,6 +88,10 @@ public class MainFrame extends JFrame {
         setJMenuBar(menuBar);
     }
     
+    /**
+     * Initializes all application components, including the word searcher,
+     * board panel, control panel, result panel, and tree visualizer.
+     */
     private void initializeComponents() {
         wordSearcher = new WordSearcher();
         boardPanel = new BoardPanel();
@@ -89,10 +100,14 @@ public class MainFrame extends JFrame {
         treeFrame = new TreeVisualizer();
     }
     
+    /**
+     * Sets up the layout of the main application window, organizing the
+     * board and results panels along with the control panel at the bottom.
+     */
     private void setupLayout() {
         setLayout(new BorderLayout());
         
-        // Create main panel with board and results
+        // Crear panel principal con tablero y resultados
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(boardPanel, BorderLayout.CENTER);
         mainPanel.add(resultPanel, BorderLayout.EAST);
@@ -100,14 +115,18 @@ public class MainFrame extends JFrame {
         add(mainPanel, BorderLayout.CENTER);
         add(controlPanel, BorderLayout.SOUTH);
         
-        // Create menu bar
+        // Crear barra de menú
         setupMenuBar();
     }
     
+    /**
+     * Configures the application menu bar with options for file operations,
+     * view settings, and help.
+     */
     private void setupMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         
-        // File menu
+        // Menú de archivo
         JMenu fileMenu = new JMenu("File");
         JMenuItem loadFileItem = new JMenuItem("Load Grid File");
         JMenuItem saveResultsItem = new JMenuItem("Save Results");
@@ -119,7 +138,7 @@ public class MainFrame extends JFrame {
         fileMenu.addSeparator();
         fileMenu.add(exitItem);
         
-        // View menu
+        // Menú de vista
         JMenu viewMenu = new JMenu("View");
         JMenuItem showTreeItem = new JMenuItem("Show Search Tree");
         JMenuItem clearHighlightsItem = new JMenuItem("Clear Highlights");
@@ -129,7 +148,7 @@ public class MainFrame extends JFrame {
         viewMenu.add(clearHighlightsItem);
         viewMenu.add(showLogItem);
         
-        // Help menu
+        // Menú de ayuda
         JMenu helpMenu = new JMenu("Help");
         JMenuItem aboutItem = new JMenuItem("About");
         JMenuItem helpItem = new JMenuItem("Help");
@@ -143,7 +162,7 @@ public class MainFrame extends JFrame {
         
         setJMenuBar(menuBar);
         
-        // Menu event handlers
+        // Manejadores de eventos del menú
         loadFileItem.addActionListener(e -> loadGridFile());
         saveResultsItem.addActionListener(e -> saveResults());
         exitItem.addActionListener(e -> System.exit(0));
@@ -154,6 +173,10 @@ public class MainFrame extends JFrame {
         showLogItem.addActionListener(e -> logWindow.setVisible(true));
     }
     
+    /**
+     * Sets up event handlers for the control panel buttons, linking them to
+     * their respective actions in the main frame.
+     */
     private void setupEventHandlers() {
         controlPanel.setSearchListener(new ControlPanel.SearchListener() {
             @Override
@@ -183,6 +206,9 @@ public class MainFrame extends JFrame {
         });
     }
     
+    /**
+     * Configures window properties including size and behavior.
+     */
     private void setWindowProperties() {
         setTitle("Word Search Application");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -191,6 +217,10 @@ public class MainFrame extends JFrame {
         setLocationRelativeTo(null);
     }
     
+    /**
+     * Loads a grid file selected by the user and initializes the word searcher
+     * with the grid and dictionary from the file.
+     */
     private void loadGridFile() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new java.io.File("resources"));
@@ -220,14 +250,25 @@ public class MainFrame extends JFrame {
         }
     }
     
+    /**
+     * Initiates a depth-first search (DFS) for words in the loaded grid.
+     */
     private void performDFSSearch() {
         performSearch("DFS");
     }
     
+    /**
+     * Initiates a breadth-first search (BFS) for words in the loaded grid.
+     */
     private void performBFSSearch() {
         performSearch("BFS");
     }
     
+    /**
+     * Performs a search using the specified algorithm (DFS or BFS).
+     * It resets the state of the nodes and logs the search process.
+     * @param algorithm The search algorithm to use ("DFS" or "BFS").
+     */
     private void performSearch(String algorithm) {
         if (!wordSearcher.hasValidConfiguration()) {
             JOptionPane.showMessageDialog(this, "Please load a grid file first.");
@@ -312,11 +353,18 @@ public class MainFrame extends JFrame {
         worker.execute();
     }
     
+    /**
+     * Displays the search results in the result panel and highlights found words on the board.
+     * @param result The search result containing found paths.
+     */
     private void displayResults(SearchResult result) {
         resultPanel.setResults(result);
         boardPanel.highlightFoundWords(result.getFoundPaths());
     }
     
+    /**
+     * Saves the current search results to a file chosen by the user.
+     */
     private void saveResults() {
         if (resultPanel.hasResults()) {
             JFileChooser fileChooser = new JFileChooser();
@@ -336,6 +384,9 @@ public class MainFrame extends JFrame {
         }
     }
     
+    /**
+     * Displays the search tree visualization if there are results available.
+     */
     private void showTreeVisualization() {
         if (resultPanel.hasResults()) {
             treeFrame.printTreeStructure(treeFrame.getRootNode(), "");
@@ -344,10 +395,16 @@ public class MainFrame extends JFrame {
         }
     }
     
+    /**
+     * Clears all highlights from the board.
+     */
     private void clearHighlights() {
         boardPanel.clearHighlights();
     }
     
+    /**
+     * Clears all components, including the board, results, and control panel.
+     */
     private void clearAll() {
         boardPanel.clear();
         resultPanel.clear();
@@ -355,6 +412,9 @@ public class MainFrame extends JFrame {
         wordSearcher.reset();
     }
     
+    /**
+     * Displays an about dialog with information about the application.
+     */
     private void showAboutDialog() {
         String message = "Word Search Application\n" +
                         "Version 1.0\n\n" +
@@ -369,6 +429,9 @@ public class MainFrame extends JFrame {
         JOptionPane.showMessageDialog(this, message, "About", JOptionPane.INFORMATION_MESSAGE);
     }
     
+    /**
+     * Displays a help dialog with instructions on how to use the application.
+     */
     private void showHelpDialog() {
         String message = "How to use:\n\n" +
                         "1. Load a grid file using File -> Load Grid File\n" +
@@ -384,6 +447,11 @@ public class MainFrame extends JFrame {
         JOptionPane.showMessageDialog(this, message, "Help", JOptionPane.INFORMATION_MESSAGE);
     }
     
+    /**
+     * Performs a search for a specific word entered by the user.
+     * It validates the word and initiates the search process.
+     * @param word The word to search for.
+     */
     private void performSpecificWordSearch(String word) {
         if (word == null || word.trim().length() < 3) {
             JOptionPane.showMessageDialog(this, "Por favor, ingrese una palabra de al menos 3 letras.", "Palabra Inválida", JOptionPane.WARNING_MESSAGE);
@@ -436,6 +504,10 @@ public class MainFrame extends JFrame {
         worker.execute();
     }
     
+    /**
+     * Returns the log window for displaying logs and messages.
+     * @return The log window instance.
+     */
     public LogWindow getLogWindow() {
         return logWindow;
     }

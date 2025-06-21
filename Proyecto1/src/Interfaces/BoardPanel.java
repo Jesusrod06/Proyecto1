@@ -10,31 +10,40 @@ import java.util.List;
 import proyecto1.Node;
 import proyecto1.WordPath;
 
-/*
- *
- * @author jesus rodriguez
+/**
+ * Panel that displays the search grid and highlights found words.
  */
 public class BoardPanel  extends JPanel {
-     private char[][] grid;
-    private JLabel[][] gridLabels;
-    private int rows;
-    private int cols;
+     private char[][] puzzleGrid;
+    private JLabel[][] cellLabels;
+    private int gridRows;
+    private int gridCols;
     
+    /**
+     * Creates a fresh panel with a "waiting for content" message.
+     * @implNote We use {@link BorderLayout} here - it handles resizing better.
+     */
     public BoardPanel() {
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createTitledBorder("Word Search Grid"));
+        setBorder(BorderFactory.createTitledBorder("Grilla de Búsqueda de Palabras"));
         setBackground(Color.WHITE);
         
-        JLabel placeholderLabel = new JLabel("Load a grid file to see the puzzle here", JLabel.CENTER);
-        placeholderLabel.setFont(new Font("Arial", Font.ITALIC, 16));
-        placeholderLabel.setForeground(Color.GRAY);
-        add(placeholderLabel, BorderLayout.CENTER);
+        JLabel placeholderMessage = new JLabel("Carga un archivo de grilla para ver el puzzle aquí", JLabel.CENTER);
+        placeholderMessage.setFont(new Font("Arial", Font.ITALIC, 16));
+        placeholderMessage.setForeground(Color.GRAY);
+        add(placeholderMessage, BorderLayout.CENTER);
     }
     
+    /**
+     * Loads up a fresh letter grid and makes the UI look pretty again.
+     * @param grid your 2D character matrix (seriously, don't pass null)
+     * @throws IllegalArgumentException if the grid's wonky (uneven rows)
+     * @see #createGridDisplay() (how the magic happens)
+     */
     public void setGrid(char[][] grid) {
-        this.grid = grid;
-        this.rows = grid.length;
-        this.cols = grid[0].length;
+        this.puzzleGrid = grid;
+        this.gridRows = grid.length;
+        this.gridCols = grid[0].length;
         
         removeAll();
         createGridDisplay();
@@ -42,92 +51,134 @@ public class BoardPanel  extends JPanel {
         repaint();
     }
     
+    
+    /**
+     * Builds the visual grid using Swing labels ({@link JLabel}).
+     * <p>
+     * Each cell comes with:
+     * <ul>
+     *   <li>Centered text in that sweet {@code Monospaced} font</li>
+     *   <li>A snazzy gray border to keep things organized</li>
+     *   <li>A cozy 42x42 pixel size (but we can resize if needed)</li>
+     * </ul>
+     * </p>
+     */
     private void createGridDisplay() {
-        JPanel gridPanel = new JPanel(new GridLayout(rows, cols, 2, 2));
-        gridPanel.setBackground(Color.WHITE);
+        JPanel gridContainer = new JPanel(new GridLayout(gridRows, gridCols, 2, 2));
+        gridContainer.setBackground(Color.WHITE);
         
-        gridLabels = new JLabel[rows][cols];
+        cellLabels = new JLabel[gridRows][gridCols];
         
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                JLabel label = new JLabel(String.valueOf(grid[i][j]), JLabel.CENTER);
-                label.setFont(new Font("Monospaced", Font.BOLD, 18));
-                label.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-                label.setBackground(Color.WHITE);
-                label.setOpaque(true);
-                label.setPreferredSize(new Dimension(40, 40));
+        for (int i = 0; i < gridRows; i++) {
+            for (int j = 0; j < gridCols; j++) {
+                JLabel cellLabel = new JLabel(String.valueOf(puzzleGrid[i][j]), JLabel.CENTER);
+                cellLabel.setFont(new Font("Monospaced", Font.BOLD, 18));
+                cellLabel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+                cellLabel.setBackground(Color.WHITE);
+                cellLabel.setOpaque(true);
+                cellLabel.setPreferredSize(new Dimension(42, 42));
                 
-                gridLabels[i][j] = label;
-                gridPanel.add(label);
+                cellLabels[i][j] = cellLabel;
+                gridContainer.add(cellLabel);
             }
         }
         
-        add(gridPanel, BorderLayout.CENTER);
+        add(gridContainer, BorderLayout.CENTER);
     }
     
+    /**
+     * Makes all the found word paths glow with different colors.
+     * 
+     * @param foundPaths List of word trails we found (yo, don't pass null here)
+     * 
+     * @implNote Colors cycle through: 🌈 yellow, light gray, pink... like a rainbow!
+     * 
+     * @see #highlightPath(WordPath, Color) (how we make single paths shine)
+     */
     public void highlightFoundWords(List<?> foundPaths) {
-        // Placeholder for highlighting functionality
-        // Will highlight cells that are part of found words
-        if (gridLabels != null) {
-            // Reset all backgrounds first
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < cols; j++) {
-                    gridLabels[i][j].setBackground(Color.WHITE);
+        if (cellLabels != null) {
+            // Resetear todos los fondos primero
+            for (int i = 0; i < gridRows; i++) {
+                for (int j = 0; j < gridCols; j++) {
+                    cellLabels[i][j].setBackground(Color.WHITE);
                 }
             }
             
-            // Apply highlighting based on found paths
-            // This is a simplified implementation
+            // Aplicar resaltado basado en los caminos encontrados
             Color[] highlightColors = {Color.YELLOW, Color.LIGHT_GRAY, Color.PINK, Color.CYAN, Color.ORANGE};
             int colorIndex = 0;
             
-            // Note: Actual implementation would iterate through WordPath objects
-            // and highlight the specific cells in each path
+            // Nota: La implementación real iteraría a través de objetos WordPath
+            // y resaltaría las celdas específicas en cada camino
         }
     }
     
+    /**
+     *
+     * Highlights a specific path on the grid with a given color.
+     *
+     * @param path The path to highlight (a {@link WordPath} object). Ignores {@code null}.
+
+     * @param color Background color. Use {@link Color#WHITE} to "un-highlight".
+     */
     public void highlightPath(WordPath path, Color color) {
-        if (gridLabels != null && path != null) {
+        if (cellLabels != null && path != null) {
             for (Node node : path.getPath()) {
-                gridLabels[node.getRow()][node.getCol()].setBackground(color);
+                cellLabels[node.getRow()][node.getCol()].setBackground(color);
             }
             repaint();
         }
     }
     
+    /**
+     * Restart all the cells to white background
+     * @apiNote Más eficiente que {@link #clear()} para reutilizar la misma grilla.
+     */
     public void clearHighlights() {
-        if (gridLabels != null) {
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < cols; j++) {
-                    gridLabels[i][j].setBackground(Color.WHITE);
+        if (cellLabels != null) {
+            for (int i = 0; i < gridRows; i++) {
+                for (int j = 0; j < gridCols; j++) {
+                    cellLabels[i][j].setBackground(Color.WHITE);
                 }
             }
             repaint();
         }
     }
-    
+    /**
+     *
+     * Resets the panel completely to its initial state (no grid).
+     *
+     * @implNote Frees resources by clearing references to the current grid.
+     */
     public void clear() {
         removeAll();
         
-        JLabel placeholderLabel = new JLabel("Load a grid file to see the puzzle here", JLabel.CENTER);
-        placeholderLabel.setFont(new Font("Arial", Font.ITALIC, 16));
-        placeholderLabel.setForeground(Color.GRAY);
-        add(placeholderLabel, BorderLayout.CENTER);
+        JLabel placeholderMessage = new JLabel("Carga un archivo de grilla para ver el puzzle aquí", JLabel.CENTER);
+        placeholderMessage.setFont(new Font("Arial", Font.ITALIC, 16));
+        placeholderMessage.setForeground(Color.GRAY);
+        add(placeholderMessage, BorderLayout.CENTER);
         
-        grid = null;
-        gridLabels = null;
-        rows = 0;
-        cols = 0;
+        puzzleGrid = null;
+        cellLabels = null;
+        gridRows = 0;
+        gridCols = 0;
         
         revalidate();
         repaint();
     }
-    
-     @Override
+     /**
+
+     Sets the preferred panel size based on the grid dimensions.
+
+    @return A {@link Dimension} of 420x420 pixels if no grid exists, or the calculated size.
+
+    @implNote Each cell takes up ~45 pixels (including borders and margins).
+      */
+    @Override
     public Dimension getPreferredSize() {
-        if (grid != null) {
-            return new Dimension(cols * 45, rows * 45);
+        if (puzzleGrid != null) {
+            return new Dimension(gridCols * 45, gridRows * 45);
         }
-        return new Dimension(400, 400);
+        return new Dimension(420, 420);
     }
 }

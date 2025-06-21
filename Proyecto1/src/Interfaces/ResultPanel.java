@@ -15,11 +15,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+
 /**
- *
- * @author jesus rodriguez
+ * ResultPanel is a JPanel that displays the results of the word search operation.
+ * It shows the algorithm used, the time taken, the number of words found,
+ * and the number of nodes visited during the search. It also provides a text area
+ * to display the found words and their details.
  */
-public class ResultPanel extends JPanel{
+public class ResultPanel extends JPanel {
     private JTextArea resultsArea;
     private JLabel algorithmLabel;
     private JLabel timeLabel;
@@ -27,12 +30,18 @@ public class ResultPanel extends JPanel{
     private JLabel nodesVisitedLabel;
     private boolean hasResults;
     
+    /**
+     * Constructs the ResultPanel and initializes its components and layout.
+     */
     public ResultPanel() {
         initializeComponents();
         setupLayout();
         clear();
     }
     
+    /**
+     * Initializes the components of the ResultPanel, including labels and text area.
+     */
     private void initializeComponents() {
         resultsArea = new JTextArea();
         resultsArea.setEditable(false);
@@ -47,12 +56,15 @@ public class ResultPanel extends JPanel{
         hasResults = false;
     }
     
+    /**
+     * Sets up the layout of the ResultPanel, organizing the statistics and results area.
+     */
     private void setupLayout() {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createTitledBorder("Search Results"));
         setPreferredSize(new Dimension(300, 0));
         
-        // Statistics panel
+        // Panel de estadísticas
         JPanel statsPanel = new JPanel(new GridLayout(4, 1, 5, 5));
         statsPanel.setBorder(BorderFactory.createTitledBorder("Statistics"));
         statsPanel.add(algorithmLabel);
@@ -60,7 +72,7 @@ public class ResultPanel extends JPanel{
         statsPanel.add(wordsFoundLabel);
         statsPanel.add(nodesVisitedLabel);
         
-        // Results scroll pane
+        // Panel de resultados con scroll
         JScrollPane scrollPane = new JScrollPane(resultsArea);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Found Words"));
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -70,11 +82,16 @@ public class ResultPanel extends JPanel{
         add(scrollPane, BorderLayout.CENTER);
     }
     
+    /**
+     * Sets the results of the search operation.
+     * This method updates the statistics labels and the results area.
+     * @param searchResult The result of the search operation (placeholder implementation).
+     */
     public void setResults(Object searchResult) {
-        // Placeholder implementation - would normally take SearchResult object
+        // Implementación de marcador de posición - normalmente tomaría un objeto SearchResult
         hasResults = true;
         
-        // Mock data for demonstration
+        // Datos simulados para demostración
         algorithmLabel.setText("Algorithm: DFS");
         timeLabel.setText("Time: 45 ms");
         wordsFoundLabel.setText("Words Found: 3/5");
@@ -89,6 +106,9 @@ public class ResultPanel extends JPanel{
         resultsArea.setCaretPosition(0);
     }
     
+    /**
+     * Clears the results and resets the statistics labels.
+     */
     public void clear() {
         hasResults = false;
         
@@ -101,10 +121,18 @@ public class ResultPanel extends JPanel{
         resultsArea.setCaretPosition(0);
     }
     
+    /**
+     * Checks if there are results available.
+     * @return true if there are results, false otherwise.
+     */
     public boolean hasResults() {
         return hasResults;
     }
     
+    /**
+     * Returns the results as a formatted text string.
+     * @return A string containing the results of the search.
+     */
     public String getResultsAsText() {
         if (!hasResults) {
             return "No results available";
@@ -123,6 +151,14 @@ public class ResultPanel extends JPanel{
         return sb.toString();
     }
     
+    /**
+     * Updates the statistics displayed in the panel.
+     * @param algorithm The algorithm used for the search.
+     * @param timeMs The time taken for the search in milliseconds.
+     * @param wordsFound The number of words found during the search.
+     * @param totalWords The total number of words to search for.
+     * @param nodesVisited The number of nodes visited during the search.
+     */
     public void updateStatistics(String algorithm, long timeMs, int wordsFound, int totalWords, int nodesVisited) {
         algorithmLabel.setText("Algorithm: " + algorithm);
         timeLabel.setText("Time: " + timeMs + " ms");
@@ -130,9 +166,12 @@ public class ResultPanel extends JPanel{
         nodesVisitedLabel.setText("Nodes Visited: " + nodesVisited);
     }
     
+    /**
+     * Appends a result to the results area.
+     * @param result The result string to append.
+     */
     public void appendResult(String result) {
         resultsArea.append(result + "\n");
         resultsArea.setCaretPosition(resultsArea.getDocument().getLength());
     }
-    
 }

@@ -12,149 +12,337 @@ import java.util.List;
 import java.util.ArrayList;
 
 /**
- *
- * @author jesus rodriguez
+ * Visualizes the search tree using tree data structure.
+ * Shows how search algorithms traverse the grid.
+ * 
+ * <p>This class is responsible for converting search paths into
+ * visualizable tree structures, providing different output formats
+ * for search algorithm analysis and debugging.</p>
+ * 
+ * <p><strong>Main features:</strong></p>
+ * <ul>
+ *   <li>Search tree construction from word paths</li>
+ *   <li>DOT format (GraphViz) representation generation</li>
+ *   <li>Conversion to readable text structures</li>
+ *   <li>Automatic level-based tree coloring</li>
+ * </ul>
+ * 
+ * @author Visualization Module
+ * @version 2.3
+ * @since 1.2
  */
 public class TreeVisualizer {
-    public static class TreeNode {
-        private String id;
-        private String label;
-        private int level;
-        private List<TreeNode> children;
-        private Node gridNode;
+    
+    /**
+ * Represents an individual node in the visualization tree.
+ * 
+ * <p>Each node maintains information about its position in the tree,
+ * its relationship with the corresponding grid node, and the
+ * connections to its child nodes.</p>
+ * 
+ * <p>The structure allows building hierarchical trees that reflect
+ * the exploration order of search algorithms.</p>
+ * 
+ * @since 1.2
+ */
+public static class TreeNode {
+    /** Unique node identifier in the tree */
+    private String nodeId;
+    
+    /** Descriptive node label (includes character and position) */
+    private String nodeLabel;
+    
+    /** Node level in the tree (depth from root) */
+    private int treeLevel;
+    
+    /** List of child nodes in the tree */
+    private List<TreeNode> childNodes;
         
-        public TreeNode(String id, String label, int level, Node gridNode) {
-            this.id = id;
-            this.label = label;
-            this.level = level;
-            this.gridNode = gridNode;
-            this.children = new ArrayList<>();
-        }
-        
-        public void addChild(TreeNode child) {
-            children.add(child);
-        }
-        
-        // Getters
-        public String getId() { return id; }
-        public String getLabel() { return label; }
-        public int getLevel() { return level; }
-        public List<TreeNode> getChildren() { return children; }
-        public Node getGridNode() { return gridNode; }
+        /** Reference to the corresponding node in the original grid */
+private Node correspondingGridNode;
+
+/**
+ * Constructor that initializes a new tree node.
+ * 
+ * @param id unique identifier for this node
+ * @param label descriptive node label
+ * @param level depth level in the tree (0 = root)
+ * @param gridNode corresponding node in the original grid
+ */
+public TreeNode(String id, String label, int level, Node gridNode) {
+    this.nodeId = id;
+    this.nodeLabel = label;
+    this.treeLevel = level;
+    this.correspondingGridNode = gridNode;
+    this.childNodes = new ArrayList<>();
+}
+
+/**
+ * Adds a child node to this tree node.
+ * 
+ * @param childNode the child node to add
+ */
+public void addChild(TreeNode childNode) {
+    childNodes.add(childNode);
+}
+
+// Access methods
+
+/**
+ * Gets the unique node identifier.
+ * 
+ * @return the node ID
+ */
+public String getId() { return nodeId; }
+
+/**
+ * Gets the descriptive node label.
+ * 
+ * @return the node label
+ */
+public String getLabel() { return nodeLabel; }
+
+/**
+ * Gets the node depth level in the tree.
+ * 
+ * @return the node level (0 for root)
+ */
+public int getLevel() { return treeLevel; }
+
+/**
+ * Gets the list of child nodes.
+ * 
+ * @return immutable list of child nodes
+ */
+public List<TreeNode> getChildren() { return childNodes; }
+
+/**
+ * Gets the corresponding node in the original grid.
+ * 
+ * @return the associated grid node
+ */
+public Node getGridNode() { return correspondingGridNode; }
+}
+
+/** Root node of the current tree */
+private TreeNode rootTreeNode;
+
+/** Counter for generating unique node IDs */
+private int nodeIdCounter;
+
+/**
+ * Constructor that initializes the visualizer with an empty tree.
+ */
+public TreeVisualizer() {
+    this.nodeIdCounter = 0;
+}
+
+/**
+ * Creates a search tree from a found word path.
+ * 
+ * <p>This method converts a linear sequence of nodes (WordPath) into
+ * a hierarchical tree structure, where each node represents a
+ * step in the search process.</p>
+ * 
+ * <p>The resulting tree has the following characteristics:</p>
+ * <ul>
+ *   <li>The root represents the search starting point</li>
+ *   <li>Each level represents an additional step in the word</li>
+ *   <li>The leaves represent the end of the found word</li>
+ * </ul>
+ * 
+ * @param caminoPalabra the node path forming the found word
+ * @return TreeNode representing the tree root, or null if path is empty
+ * @throws IllegalArgumentException if caminoPalabra is null
+ */
+public TreeNode createSearchTree(WordPath caminoPalabra) {
+    List<Node> pathNodes = caminoPalabra.getPath();
+    if (pathNodes.isEmpty()) {
+        return null;
     }
-    
-    private TreeNode rootNode;
-    private int nodeCounter;
-    
-    public TreeVisualizer() {
-        this.nodeCounter = 0;
-    }
-    
-    public TreeNode createSearchTree(WordPath wordPath) {
-        List<Node> path = wordPath.getPath();
-        if (path.isEmpty()) {
-            return null;
-        }
         
-        nodeCounter = 0;
-        Node firstNode = path.get(0);
-        rootNode = new TreeNode(
+        nodeIdCounter = 0;
+        Node nodoInicial = pathNodes.get(0);
+        rootTreeNode = new TreeNode(
             generateNodeId(),
-            "Start: " + firstNode.getCharacter() + " (" + firstNode.getRow() + "," + firstNode.getCol() + ")",
+            "Inicio: " + nodoInicial.getCharacter() + " (" + nodoInicial.getRow() + "," + nodoInicial.getCol() + ")",
             0,
-            firstNode
+            nodoInicial
         );
         
-        TreeNode currentTreeNode = rootNode;
-        for (int i = 1; i < path.size(); i++) {
-            Node gridNode = path.get(i);
-            TreeNode childNode = new TreeNode(
+        TreeNode currentTreeNode = rootTreeNode;
+        for (int i = 1; i < pathNodes.size(); i++) {
+            Node gridNode = pathNodes.get(i);
+            TreeNode childTreeNode = new TreeNode(
                 generateNodeId(),
                 gridNode.getCharacter() + " (" + gridNode.getRow() + "," + gridNode.getCol() + ")",
                 i,
                 gridNode
             );
-            currentTreeNode.addChild(childNode);
-            currentTreeNode = childNode;
+            currentTreeNode.addChild(childTreeNode);
+            currentTreeNode = childTreeNode;
         }
         
-        return rootNode;
+        return rootTreeNode;
     }
     
-    public String generateDotGraph(TreeNode root) {
-        if (root == null) {
-            return "";
-        }
+    /**
+     * Generates a tree representation in DOT format (GraphViz).
+     * 
+     * <p>The DOT format is standard for graph visualization and can
+     * be processed by tools like GraphViz to generate images
+     * of the search tree.</p>
+     * 
+     * <p><strong>Output features:</strong></p>
+     * <ul>
+     *   <li>Top-to-bottom orientation (rankdir=TB)</li>
+     *   <li>Circular nodes with level-based colors</li>
+     *   <li>Descriptive labels on each node</li>
+     * </ul>
+     * 
+     * @param rootNode the root of the tree to convert
+     * @return String with the DOT code, or empty string if rootNode is null
+     * 
+     * @see <a href="https://graphviz.org/">GraphViz Documentation</a>
+     */
+public String generateDotGraph(TreeNode rootNode) {
+    if (rootNode == null) {
+        return "";
+    }
+    
+    StringBuilder dotBuilder = new StringBuilder();
+    dotBuilder.append("digraph SearchTree {\n");
+    dotBuilder.append("    rankdir=TB;\n");
+    dotBuilder.append("    node [shape=circle, style=filled];\n");
+    
+    generateDotNodes(rootNode, dotBuilder);
+    generateDotEdges(rootNode, dotBuilder);
+    
+    dotBuilder.append("}\n");
+    return dotBuilder.toString();
+}
+    
+    /**
+     * Genera las definiciones de nodos para el formato DOT.
+     * 
+     * <p>Método auxiliar recursivo que procesa todos los nodos del árbol
+     * y genera sus definiciones con colores apropiados según su nivel.</p>
+     * 
+     * @param treeNode el nodo actual a procesar
+     * @param dotBuilder el StringBuilder donde acumular el output DOT
+     */
+    private void generateDotNodes(TreeNode treeNode, StringBuilder dotBuilder) {
+        String nodeColor = getNodeColor(treeNode.getLevel());
+        dotBuilder.append("    ").append(treeNode.getId())
+           .append(" [label=\"").append(treeNode.getLabel())
+           .append("\", fillcolor=\"").append(nodeColor).append("\"];\n");
         
-        StringBuilder dot = new StringBuilder();
-        dot.append("digraph SearchTree {\n");
-        dot.append("    rankdir=TB;\n");
-        dot.append("    node [shape=circle, style=filled];\n");
-        
-        generateDotNodes(root, dot);
-        generateDotEdges(root, dot);
-        
-        dot.append("}\n");
-        return dot.toString();
-    }
-    
-    private void generateDotNodes(TreeNode node, StringBuilder dot) {
-        String color = getNodeColor(node.getLevel());
-        dot.append("    ").append(node.getId())
-           .append(" [label=\"").append(node.getLabel())
-           .append("\", fillcolor=\"").append(color).append("\"];\n");
-        
-        for (TreeNode child : node.getChildren()) {
-            generateDotNodes(child, dot);
+        for (TreeNode child : treeNode.getChildren()) {
+            generateDotNodes(child, dotBuilder);
         }
     }
     
-    private void generateDotEdges(TreeNode node, StringBuilder dot) {
-        for (TreeNode child : node.getChildren()) {
-            dot.append("    ").append(node.getId())
-               .append(" -> ").append(child.getId()).append(";\n");
-            generateDotEdges(child, dot);
-        }
+    /**
+ * Generates edge definitions for DOT format.
+ * 
+ * <p>Recursive helper method that creates connections between parent
+ * and child nodes in the DOT representation.</p>
+ * 
+ * @param treeNode current node to process
+ * @param dotBuilder StringBuilder to accumulate DOT output
+ */
+private void generateDotEdges(TreeNode treeNode, StringBuilder dotBuilder) {
+    for (TreeNode child : treeNode.getChildren()) {
+        dotBuilder.append("    ").append(treeNode.getId())
+           .append(" -> ").append(child.getId()).append(";\n");
+        generateDotEdges(child, dotBuilder);
     }
+}
+
+/**
+ * Determines the appropriate color for a node based on its tree level.
+ * 
+ * <p>Uses a cyclic color scheme to visually differentiate
+ * different depth levels in the search tree.</p>
+ * 
+ * @param nivelNodo node depth level (0 = root)
+ * @return String with color name in DOT-compatible format
+ */
+private String getNodeColor(int nivelNodo) {
+    String[] availableColors = {"lightblue", "lightgreen", "lightyellow", "lightpink", "lightgray"};
+    return availableColors[nivelNodo % availableColors.length];
+}
+
+/**
+ * Generates a unique identifier for a new tree node.
+ * 
+ * <p>Generated IDs follow the pattern "nodo1", "nodo2", etc.</p>
+ * 
+ * @return String with unique node ID
+ */
+private String generateNodeId() {
+    return "nodo" + (++nodeIdCounter);
+}
+
+/**
+ * Prints the tree structure to console in ASCII format.
+ * 
+ * <p>Uses special characters to create a visual representation
+ * of the tree that clearly shows node hierarchy.</p>
+ * 
+ * @param treeNode root node of the tree to print
+ * @param prefijo indentation prefix (internal use)
+ */
+public void printTreeStructure(TreeNode treeNode, String prefijo) {
+    if (treeNode == null) return;
     
-    private String getNodeColor(int level) {
-        String[] colors = {"lightblue", "lightgreen", "lightyellow", "lightpink", "lightgray"};
-        return colors[level % colors.length];
+    System.out.println(prefijo + treeNode.getLabel());
+    for (int i = 0; i < treeNode.getChildren().size(); i++) {
+        TreeNode childNode = treeNode.getChildren().get(i);
+        String nuevoPrefijo = prefijo + (i == treeNode.getChildren().size() - 1 ? "└── " : "├── ");
+        printTreeStructure(childNode, nuevoPrefijo);
     }
-    
-    private String generateNodeId() {
-        return "node" + (++nodeCounter);
+}
+
+/**
+ * Converts the tree to a list of ASCII-formatted strings.
+ * 
+ * <p>Similar to {@link #printTreeStructure} but returns results
+ * as a string list instead of direct printing.</p>
+ * 
+ * @param treeNode root node of the tree to convert
+ * @return List&lt;String&gt; with each line of tree representation
+ */
+public List<String> getTreeAsList(TreeNode treeNode) {
+    List<String> treeStringList = new ArrayList<>();
+    if (treeNode != null) {
+        collectTreeNodes(treeNode, "", treeStringList);
     }
-    
-    public void printTreeStructure(TreeNode node, String prefix) {
-        if (node == null) return;
-        
-        System.out.println(prefix + node.getLabel());
-        for (int i = 0; i < node.getChildren().size(); i++) {
-            TreeNode child = node.getChildren().get(i);
-            String newPrefix = prefix + (i == node.getChildren().size() - 1 ? "└── " : "├── ");
-            printTreeStructure(child, newPrefix);
-        }
+    return treeStringList;
+}
+
+/**
+ * Recursive helper method to collect nodes in list format.
+ * 
+ * @param treeNode current node to process
+ * @param prefijo current indentation prefix
+ * @param resultado list to accumulate result lines
+ */
+private void collectTreeNodes(TreeNode treeNode, String prefijo, List<String> resultado) {
+    resultado.add(prefijo + treeNode.getLabel());
+    for (int i = 0; i < treeNode.getChildren().size(); i++) {
+        TreeNode childNode = treeNode.getChildren().get(i);
+        String nuevoPrefijo = prefijo + (i == treeNode.getChildren().size() - 1 ? "└── " : "├── ");
+        collectTreeNodes(childNode, nuevoPrefijo, resultado);
     }
-    
-    public List<String> getTreeAsList(TreeNode node) {
-        List<String> result = new ArrayList<>();
-        if (node != null) {
-            collectTreeNodes(node, "", result);
-        }
-        return result;
-    }
-    
-    private void collectTreeNodes(TreeNode node, String prefix, List<String> result) {
-        result.add(prefix + node.getLabel());
-        for (int i = 0; i < node.getChildren().size(); i++) {
-            TreeNode child = node.getChildren().get(i);
-            String newPrefix = prefix + (i == node.getChildren().size() - 1 ? "└── " : "├── ");
-            collectTreeNodes(child, newPrefix, result);
-        }
-    }
-    
-    public TreeNode getRootNode() {
-        return rootNode;
-    }
+}
+
+/**
+ * Gets the root node of the current tree.
+ * 
+ * @return TreeNode representing the root, or null if no tree exists
+ */
+public TreeNode getRootNode() {
+    return rootTreeNode;
+}
 }

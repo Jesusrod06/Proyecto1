@@ -6,9 +6,8 @@ package Interfaces;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- *
- * @author jesus rodriguez
+/** 
+ * Log window to display visited nodes during search
  */
 public class LogWindow extends JFrame {
      private JTextArea logArea;
